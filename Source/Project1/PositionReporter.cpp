@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PositionReporter.h"
-
+#include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 UPositionReporter::UPositionReporter()
@@ -11,6 +11,7 @@ UPositionReporter::UPositionReporter()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	
 }
 
 
@@ -20,7 +21,9 @@ void UPositionReporter::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	auto actor = GetOwner();
+	auto name_of_actor = actor->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("Position Report for %s"), *name_of_actor);
 }
 
 
