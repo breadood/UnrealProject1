@@ -23,7 +23,9 @@ void UPositionReporter::BeginPlay()
 	// ...
 	auto actor = GetOwner();
 	auto name_of_actor = actor->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("Position Report for %s"), *name_of_actor);
+	auto position_of_actor = actor->GetActorLocation().ToString();
+	// FString position_string = "X: " + position_of_actor.X + ", Y: " + position_of_actor.Y + ", Z: " + position_of_actor.Z;
+	UE_LOG(LogTemp, Warning, TEXT("%s is at position %s"), *name_of_actor, *position_of_actor);
 }
 
 
