@@ -20,11 +20,14 @@ void UActorRotator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	// ...	
+}
+
+void UActorRotator::OpenDoor()
+{
 	auto actor = GetOwner();
-	auto new_rotation = FRotator(0.f, 60.f, 0.f);
+	auto new_rotation = FRotator(0.f, OPEN_DOOR_ANGLE, 0.f);
 	actor->SetActorRotation(new_rotation);
-	
 }
 
 
@@ -34,5 +37,8 @@ void UActorRotator::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	if (trigger_volume->IsOverlappingActor(triggering_actor)) {
+		OpenDoor();
+	}
 }
 
