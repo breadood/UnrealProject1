@@ -2,6 +2,7 @@
 
 #include "ActorRotator.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 
 
 // Sets default values for this component's properties
@@ -21,6 +22,9 @@ void UActorRotator::BeginPlay()
 	Super::BeginPlay();
 
 	// ...	
+	auto world = GetWorld();
+	triggering_actor = world->GetFirstPlayerController()->GetPawn();
+	door_is_opened = false;
 }
 
 void UActorRotator::OpenDoor()
@@ -28,6 +32,15 @@ void UActorRotator::OpenDoor()
 	auto actor = GetOwner();
 	auto new_rotation = FRotator(0.f, OPEN_DOOR_ANGLE, 0.f);
 	actor->SetActorRotation(new_rotation);
+	door_is_opened = true;
+}
+
+void UActorRotator::CloseDoor()
+{
+	auto actor = GetOwner();
+	auto new_rotation = FRotator(0.f, CLOSE_DOOR_ANGLE, 0.f);
+	actor->SetActorRotation(new_rotation);
+	door_is_opened = false;
 }
 
 
@@ -35,10 +48,13 @@ void UActorRotator::OpenDoor()
 void UActorRotator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	bool door_should_open = trigger_volume->IsOverlappingActor(triggering_actor);
 	// ...
-	if (trigger_volume->IsOverlappingActor(triggering_actor)) {
+	if (door_should_open && !door_is_opened) {
 		OpenDoor();
+	}
+	else if (!door_should_open && door_is_opened) {
+		CloseDoor();
 	}
 }
 
