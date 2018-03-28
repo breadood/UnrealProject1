@@ -29,19 +29,22 @@ void UActorRotator::BeginPlay()
 
 void UActorRotator::OpenDoor()
 {
-	auto actor = GetOwner();
-	auto new_rotation = FRotator(0.f, OPEN_DOOR_ANGLE, 0.f);
-	actor->SetActorRotation(new_rotation);
+	RotateDoor(OPEN_DOOR_ANGLE);
 	door_is_opened = true;
 }
 
 void UActorRotator::CloseDoor()
 {
-	auto actor = GetOwner();
-	auto new_rotation = FRotator(0.f, CLOSE_DOOR_ANGLE, 0.f);
-	actor->SetActorRotation(new_rotation);
+	RotateDoor(CLOSE_DOOR_ANGLE);
 	door_is_opened = false;
 }
+
+void UActorRotator::RotateDoor(float rotation_angle)
+{
+	GetOwner()->SetActorRotation(FRotator(0.f, rotation_angle, 0.f));;
+}
+
+
 
 
 // Called every frame
