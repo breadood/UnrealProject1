@@ -1,6 +1,7 @@
 // Copyright Tianyi
 
 #include "GrabbingComponent.h"
+#include "Engine/World.h"
 
 
 // Sets default values for this component's properties
@@ -30,5 +31,9 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	FVector player_location;
+	FRotator player_rotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
+	UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), *player_location.ToString(), *player_rotation.ToString());
 }
 
