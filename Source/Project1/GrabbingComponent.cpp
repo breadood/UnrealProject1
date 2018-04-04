@@ -36,7 +36,15 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
 
 	FVector player_reach = player_location + player_rotation.Vector() * PLAYER_REACH;
-	DrawDebugLine(GetWorld(), player_location, player_reach, FColor(0, 0, 255), false, 0.0f, 0, 10.0f);
-	//UE_LOG(LogTemp, Warning, TEXT("Player is reaching position %s"), *player_reach.ToString());
+
+	FHitResult hit_result;
+	FCollisionQueryParams collision_param(FName(TEXT("GRAB")), false, GetOwner());
+	GetWorld()->LineTraceSingleByObjectType(hit_result, player_location, player_reach, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), collision_param);
+
+	AActor* hit_actor = hit_result.GetActor();
+	if (hit_actor) {
+		UE_LOG(LogTemp, Warning, TEXT("Player is hitting %s"), *hit_actor->GetName());
+	}
+	
 }
 
