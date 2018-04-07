@@ -21,7 +21,20 @@ void UGrabbingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	physics_handle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (!physics_handle) {
+		UE_LOG(LogTemp, Error, TEXT("No physics handler found"));
+		return;
+	}
+
+	input_handle = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (!input_handle) {
+		UE_LOG(LogTemp, Error, TEXT("No input handler found"));
+		return;
+	}
+
+	input_handle->BindAction("Grab", IE_Pressed, this, &UGrabbingComponent::Grab);
+	input_handle->BindAction("Release", IE_Released, this, &UGrabbingComponent::Release);
 }
 
 
@@ -31,6 +44,27 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	
+}
+
+void UGrabbingComponent::Grab()
+{
+	grabbed_item = TryReachObject();
+	if (grabbed_item) {
+		UE_LOG(LogTemp, Warning, TEXT("Trying to grab %s!"), *grabbed_item->GetName());
+	}
+}
+
+void UGrabbingComponent::Release()
+{
+	if (grabbed_item) {
+		UE_LOG(LogTemp, Warning, TEXT("Trying to release!"));
+		grabbed_item = nullptr;
+	}
+}
+
+AActor * UGrabbingComponent::TryReachObject()
+{
 	FVector player_location;
 	FRotator player_rotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
@@ -43,8 +77,8 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	AActor* hit_actor = hit_result.GetActor();
 	if (hit_actor) {
-		UE_LOG(LogTemp, Warning, TEXT("Player is hitting %s"), *hit_actor->GetName());
+		return hit_actor;
 	}
-	
+	return nullptr;
 }
 

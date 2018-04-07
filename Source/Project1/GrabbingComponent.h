@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/InputComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "GrabbingComponent.generated.h"
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -28,4 +31,16 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 		float PLAYER_REACH = 100.0f;
+	
+	UPhysicsHandleComponent* physics_handle = nullptr;
+	UInputComponent* input_handle = nullptr;
+	AActor* grabbed_item = nullptr;
+
+	void Grab();
+
+	void Release();
+
+	AActor* TryReachObject();
+
+	
 };
