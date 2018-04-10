@@ -2,7 +2,6 @@
 
 #include "GrabbingComponent.h"
 #include "Engine/World.h"
-#include "DrawDebugHelpers.h"
 
 // Sets default values for this component's properties
 UGrabbingComponent::UGrabbingComponent()
@@ -21,12 +20,20 @@ void UGrabbingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	BindPhysicsHandler();
+	BindInputHandler();
+}
+
+void UGrabbingComponent::BindPhysicsHandler()
+{
 	physics_handle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (!physics_handle) {
-		UE_LOG(LogTemp, Error, TEXT("No physics handler found"));
-		return;
+		UE_LOG(LogTemp, Error, TEXT("Physics handler found"));
 	}
+}
 
+void UGrabbingComponent::BindInputHandler()
+{
 	input_handle = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (!input_handle) {
 		UE_LOG(LogTemp, Error, TEXT("No input handler found"));
@@ -44,41 +51,51 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	
+	if (physics_handle->GrabbedComponent) {
+		UE_LOG(LogTemp, Warning, TEXT("Trying to move the component"));
+
+		physics_handle->SetTargetLocation(GetPlayerReach());
+	}
 }
 
 void UGrabbingComponent::Grab()
 {
-	grabbed_item = TryReachObject();
-	if (grabbed_item) {
-		UE_LOG(LogTemp, Warning, TEXT("Trying to grab %s!"), *grabbed_item->GetName());
+	FHitResult hit_result;
+	TryReachObject(hit_result);
+	auto grabbed_component = hit_result.GetComponent();
+
+	if (physics_handle && grabbed_component) {
+		physics_handle->GrabComponentAtLocation(grabbed_component, NAME_None, grabbed_component->GetOwner()->GetActorLocation());
+		UE_LOG(LogTemp, Warning, TEXT("Grabbing"));
 	}
 }
 
 void UGrabbingComponent::Release()
 {
-	if (grabbed_item) {
-		UE_LOG(LogTemp, Warning, TEXT("Trying to release!"));
-		grabbed_item = nullptr;
+	if (physics_handle->GrabbedComponent) {
+		UE_LOG(LogTemp, Warning, TEXT("Releasing!"));
+
+		physics_handle->ReleaseComponent();
 	}
 }
 
-AActor * UGrabbingComponent::TryReachObject()
+void UGrabbingComponent::TryReachObject(FHitResult& hit_result)
 {
 	FVector player_location;
 	FRotator player_rotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
+	FVector player_reach = GetPlayerReach();
 
-	FVector player_reach = player_location + player_rotation.Vector() * PLAYER_REACH;
-
-	FHitResult hit_result;
+	// FHitResult hit_result;
 	FCollisionQueryParams collision_param(FName(TEXT("GRAB")), false, GetOwner());
 	GetWorld()->LineTraceSingleByObjectType(hit_result, player_location, player_reach, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), collision_param);
+}
 
-	AActor* hit_actor = hit_result.GetActor();
-	if (hit_actor) {
-		return hit_actor;
-	}
-	return nullptr;
+FVector UGrabbingComponent::GetPlayerReach()
+{
+	FVector player_location;
+	FRotator player_rotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
+	return player_location + player_rotation.Vector() * PLAYER_REACH;
 }
 
