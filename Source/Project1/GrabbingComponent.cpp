@@ -61,7 +61,7 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UGrabbingComponent::Grab()
 {
 	FHitResult hit_result;
-	TryReachObject(hit_result);
+	GetPhysicsBody(hit_result);
 	auto grabbed_component = hit_result.GetComponent();
 
 	if (physics_handle && grabbed_component) {
@@ -79,11 +79,9 @@ void UGrabbingComponent::Release()
 	}
 }
 
-void UGrabbingComponent::TryReachObject(FHitResult& hit_result)
+void UGrabbingComponent::GetPhysicsBody(FHitResult& hit_result)
 {
-	FVector player_location;
-	FRotator player_rotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
+	FVector player_location = GetPlayerStart();
 	FVector player_reach = GetPlayerReach();
 
 	// FHitResult hit_result;
@@ -97,5 +95,13 @@ FVector UGrabbingComponent::GetPlayerReach()
 	FRotator player_rotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
 	return player_location + player_rotation.Vector() * PLAYER_REACH;
+}
+
+FVector UGrabbingComponent::GetPlayerStart()
+{
+	FVector player_location;
+	FRotator player_rotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(player_location, player_rotation);
+	return player_location;
 }
 

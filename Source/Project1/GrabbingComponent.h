@@ -43,9 +43,11 @@ private:
 
 	void Release();
 
-	void TryReachObject(FHitResult& hit_result);
+	void GetPhysicsBody(FHitResult& hit_result);
 
 	FVector GetPlayerReach();
+
+	FVector GetPlayerStart();
 
 	
 };
