@@ -51,7 +51,7 @@ void UActorRotator::RotateDoor(float rotation_angle)
 void UActorRotator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	bool door_should_open = trigger_volume->IsOverlappingActor(triggering_actor);
+	bool door_should_open = GetMassOnTrigger(trigger_volume) >= TRIGGER_THRESHOLD;
 	// ...
 	if (door_should_open && !door_is_opened) {
 		OpenDoor();
@@ -61,3 +61,15 @@ void UActorRotator::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	}
 }
 
+float UActorRotator::GetMassOnTrigger(ATriggerVolume* trigger) {
+	float total_mass = 0;
+	TArray<AActor*> actors_on_trigger;
+	trigger->GetOverlappingActors(actors_on_trigger);
+
+	for (const auto actor : actors_on_trigger) {
+		total_mass += actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Warning, TEXT("Trigger has: %s"), *actor->GetName());
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Total Mass: %f"), total_mass);
+	return total_mass;
+}

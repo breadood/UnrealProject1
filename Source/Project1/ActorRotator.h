@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/TriggerVolume.h"
 #include "ActorRotator.generated.h"
 
@@ -32,12 +33,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	float GetMassOnTrigger(ATriggerVolume * trigger_volume);
+
 private:
 	UPROPERTY(EditAnywhere)
 		float OPEN_DOOR_ANGLE = 90.0f;
 	UPROPERTY(EditAnywhere)
 		float CLOSE_DOOR_ANGLE = 0.0f;
-
+	UPROPERTY(EditAnywhere)
+		float TRIGGER_THRESHOLD = 10.0f;
 	UPROPERTY(EditAnywhere)
 		ATriggerVolume* trigger_volume;
 
