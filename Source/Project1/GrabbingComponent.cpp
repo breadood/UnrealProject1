@@ -51,9 +51,8 @@ void UGrabbingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	if (!physics_handle) return;
 	if (physics_handle->GrabbedComponent) {
-		UE_LOG(LogTemp, Warning, TEXT("Trying to move the component"));
-
 		physics_handle->SetTargetLocation(GetPlayerReach());
 	}
 }
@@ -66,15 +65,13 @@ void UGrabbingComponent::Grab()
 
 	if (physics_handle && grabbed_component) {
 		physics_handle->GrabComponentAtLocation(grabbed_component, NAME_None, grabbed_component->GetOwner()->GetActorLocation());
-		UE_LOG(LogTemp, Warning, TEXT("Grabbing"));
 	}
 }
 
 void UGrabbingComponent::Release()
 {
+	if (!physics_handle) return;
 	if (physics_handle->GrabbedComponent) {
-		UE_LOG(LogTemp, Warning, TEXT("Releasing!"));
-
 		physics_handle->ReleaseComponent();
 	}
 }

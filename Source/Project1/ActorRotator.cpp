@@ -29,14 +29,16 @@ void UActorRotator::BeginPlay()
 
 void UActorRotator::OpenDoor()
 {
-	RotateDoor(OPEN_DOOR_ANGLE);
+	//RotateDoor(OPEN_DOOR_ANGLE);
 	door_is_opened = true;
+	on_open_request.Broadcast();
 }
 
 void UActorRotator::CloseDoor()
 {
-	RotateDoor(CLOSE_DOOR_ANGLE);
+	//RotateDoor(CLOSE_DOOR_ANGLE);
 	door_is_opened = false;
+	on_close_request.Broadcast();
 }
 
 void UActorRotator::RotateDoor(float rotation_angle)
@@ -51,6 +53,8 @@ void UActorRotator::RotateDoor(float rotation_angle)
 void UActorRotator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (!trigger_volume)
+		return;
 	bool door_should_open = GetMassOnTrigger(trigger_volume) >= TRIGGER_THRESHOLD;
 	// ...
 	if (door_should_open && !door_is_opened) {

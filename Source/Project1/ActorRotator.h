@@ -9,6 +9,8 @@
 #include "ActorRotator.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorRequest);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT1_API UActorRotator : public UActorComponent
@@ -35,6 +37,11 @@ public:
 
 	float GetMassOnTrigger(ATriggerVolume * trigger_volume);
 
+	UPROPERTY(BlueprintAssignable)
+		FDoorRequest on_open_request;
+	UPROPERTY(BlueprintAssignable)
+		FDoorRequest on_close_request;
+
 private:
 	UPROPERTY(EditAnywhere)
 		float OPEN_DOOR_ANGLE = 90.0f;
@@ -43,8 +50,8 @@ private:
 	UPROPERTY(EditAnywhere)
 		float TRIGGER_THRESHOLD = 10.0f;
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* trigger_volume;
+		ATriggerVolume* trigger_volume = nullptr;
 
-	AActor* triggering_actor;
+	AActor* triggering_actor = nullptr;
 	bool door_is_opened;
 };
