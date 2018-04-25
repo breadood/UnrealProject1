@@ -29,8 +29,6 @@ protected:
 
 	void CloseDoor();
 
-	void RotateDoor(float rotation_angle);
-
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -43,10 +41,6 @@ public:
 		FDoorRequest on_close_request;
 
 private:
-	UPROPERTY(EditAnywhere)
-		float OPEN_DOOR_ANGLE = 90.0f;
-	UPROPERTY(EditAnywhere)
-		float CLOSE_DOOR_ANGLE = 0.0f;
 	UPROPERTY(EditAnywhere)
 		float TRIGGER_THRESHOLD = 10.0f;
 	UPROPERTY(EditAnywhere)
